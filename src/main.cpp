@@ -50,6 +50,12 @@ int main() {
     map_waypoints_dx.push_back(d_x);
     map_waypoints_dy.push_back(d_y);
   }
+  
+  // start in lane 1 where the left-most lane is 0
+  int lane = 1;
+  
+  // Have a reference velocity in mph to target
+  double ref_vel = 49.5;
 
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
                &map_waypoints_dx,&map_waypoints_dy]
