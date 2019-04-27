@@ -104,7 +104,7 @@ int main() {
             double next_s = car_s * (i+1) * dist_inc;
             // each lane is 4m wide and total of 3 lanes where the car is in the middle lane
             double next_d = 6;
-            vector <double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints.y);
+            vector <double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
             
             next_x_vals.push_back(xy[0]);
             next_y_vals.push_back(xy[1]);
