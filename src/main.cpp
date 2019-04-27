@@ -55,7 +55,7 @@ int main() {
   int lane = 1;
   
   // Have a reference velocity in mph to target
-  double ref_vel = 49.5;
+  double ref_vel = 0.0; //mph
 
   h.onMessage([&ref_vel, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
                &map_waypoints_dx,&map_waypoints_dy, &lane]
@@ -119,10 +119,16 @@ int main() {
               if ((check_car_s > car_s) && ((check_car_s-car_s) < 30)) {
                 // Do some logic here, lower reference velocity so we don't crash into the car in front of us,
                 // could also flag to try to change lanes.
-                ref_vel = 29.5; //mph
-                //too_close = true;
+                //ref_vel = 29.5; //mph
+                too_close = true;
               }
             }
+          }
+          
+          if (too_close) {
+            ref_vel -= .224;
+          } else if (ref_vel < 49.5) {
+            ref_vel += .224;
           }
 
           json msgJson;
