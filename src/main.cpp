@@ -164,7 +164,7 @@ int main() {
             double shift_y = ptsy[i] - ref_y;
             
             ptsx[i] = (shift_x * cos(0-ref_yaw) - shift_y * sin(0-ref_yaw));
-            ptsy[i] = (shift_x * sin(0-ref_yaw) - shift_y * cos(0-ref_yaw));
+            ptsy[i] = (shift_x * sin(0-ref_yaw) + shift_y * cos(0-ref_yaw));
           }
           
           // create a spline
@@ -205,7 +205,7 @@ int main() {
             
             // rotate back to normal after rotating it eariler
             x_point = (x_ref * cos(ref_yaw) - y_ref * sin(ref_yaw));
-            y_point = (x_ref * sin(ref_yaw) - y_ref * cos(ref_yaw));
+            y_point = (x_ref * sin(ref_yaw) + y_ref * cos(ref_yaw));
             
             x_point += ref_x;
             y_point += ref_y;
