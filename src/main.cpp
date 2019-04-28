@@ -149,19 +149,17 @@ int main() {
               bool temp_too_close = false;
               int temp_cost = 0;
               // set lane coefficient
-              int lane_coefficient = 0;
-              if (states[j].compare("KL") == 0) {
-                lane_coefficient = lane;
-              } else if ((states[j].compare("PLCL") == 0) ||
-                         (states[j].compare("LCL") == 0)) {
-                lane_coefficient = lane - 1;
+              int lane_coefficient = lane;
+              if ((states[j].compare("PLCL") == 0) ||
+                  (states[j].compare("LCL") == 0)) {
+                lane_coefficient -= 1;
                 // Check current lane
                 if (lane == 0) {
                   temp_cost += 100;
                 }
               } else if ((states[j].compare("PLCR") == 0) ||
                          (states[j].compare("LCR") == 0)) {
-                lane_coefficient = lane + 1;
+                lane_coefficient += 1;
                 // Check current lane
                 if (lane == 2) {
                   temp_cost += 100;
@@ -169,11 +167,11 @@ int main() {
               }
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
-                if (check_car_s-car_s > 0 && check_car_s-car_s < 30) {
+                if ((check_car_s > car_s) && (check_car_s-car_s < 30)) {
                   // buffer cost
                   temp_too_close = true;
                   temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
-                } else if (check_car_s-car_s > 0 && check_car_s-car_s < 2*VEHICLE_RADIUS) {
+                } else if ((check_car_s > car_s) && (check_car_s-car_s < 2*VEHICLE_RADIUS)) {
                   // colision cost
                   temp_too_close = true;
                   temp_cost += 1.0;
