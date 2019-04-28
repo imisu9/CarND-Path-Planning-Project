@@ -146,6 +146,7 @@ int main() {
             //  + buffer cost
             //  + inefficiency cost
             for (int j=0; j < states.size(); j++) {
+              std::cout << "$$$$$$ CHECKING STATE, " << states[j] << "$$$$$$" << std::endl;
               bool temp_too_close = false;
               double temp_cost = 0.0;
               // set lane coefficient
@@ -155,16 +156,19 @@ int main() {
                 lane_coefficient -= 1;
                 // Check current lane
                 if (lane == 0) {
-                  temp_cost += 10;
+                  temp_cost += 10.0;
                 }
               } else if ((states[j].compare("PLCR") == 0) ||
                          (states[j].compare("LCR") == 0)) {
                 lane_coefficient += 1;
                 // Check current lane
                 if (lane == 2) {
-                  temp_cost += 10;
+                  temp_cost += 10.0;
                 }
               }
+              
+              // inefficiency cost
+              temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
                 if (check_car_s > car_s) {
@@ -180,22 +184,21 @@ int main() {
                     // buffer cost
                     std::cout << "    buffer cost" << std::endl;
                     temp_too_close = true;
+                    std::cout << "    temp_too_close = " << temp_too_close << std::endl;
                     temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0;
                   }
                 }
               }
-              // inefficiency cost
-              temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
+              std::cout << "temp_cost = " << temp_cost << std::endl;
+              std::cout << "current best_cost = " << best_cost << std::endl;
               
               if (temp_cost < best_cost) {
-                std::cout << "====== a new best cost for a state ======" << std::endl;
-                std::cout << "  state = " << states[j] << std::endl;
-                std::cout << "  pre_best_cost = " << best_cost << std::endl;
-                std::cout << "  new_best_cost = " << temp_cost << std::endl;
-                std::cout << "  temp_too_close = " << temp_too_close << std::endl;
                 best_cost = temp_cost;
                 best_idx = j;
                 too_close = temp_too_close;
+                std::cout << "====== a new best cost for a state ======" << std::endl;
+                std::cout << "  state = " << states[best_idx] << std::endl;
+                std::cout << "  too_close = " << too_close << std::endl;
               }
             }
           }
