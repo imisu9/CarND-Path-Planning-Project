@@ -191,13 +191,14 @@ int main() {
           }
           
           // Select state by update lane & ref_vel & curr_state
+          /*
           curr_state = states[best_idx];
           if (curr_state.compare("LCL") == 0) {
             lane -= 1;
           } else if (curr_state.compare("LCR") == 0) {
             lane += 1;
           }         
-          
+          */
           if (false) {
             ref_vel -= .224;
           } else if (ref_vel < 49.5) {
