@@ -169,12 +169,16 @@ int main() {
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
                 if ((check_car_s > car_s) && (check_car_s-car_s < 30)) {
                   // buffer cost
+                  cout << "buffer cost" << endl;
                   temp_too_close = true;
                   temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
+                  cout << "temp_cost = " << temp_cost << endl;
                 } else if ((check_car_s > car_s) && (check_car_s-car_s < 2*VEHICLE_RADIUS)) {
                   // colision cost
+                  cout << "collision cost" << endl;
                   temp_too_close = true;
                   temp_cost += 1.0;
+                  cout << "temp_cost = " << temp_cost << endl;
                 }
               }
               // inefficiency cost
@@ -184,6 +188,8 @@ int main() {
                 best_cost = temp_cost;
                 best_idx = j;
                 too_close = temp_too_close;
+                cout << "best_cost = " << best_cost << endl;
+                cout << "temp_too_close = " << temp_too_close << endl;
               }
             }
           }
@@ -195,7 +201,7 @@ int main() {
           } else if (curr_state.compare("LCR") == 0) {
             lane += 1;
           }         
-          
+          cout << "too_close = " << too_close << endl;
           if (too_close) {
             ref_vel -= .224;
           } else if (ref_vel < 49.5) {
