@@ -218,7 +218,7 @@ int main() {
           
           curr_state = states[best_idx];
           */
-          if (too_close) {
+          if (false) {
             ref_vel -= .224;
           } else if (ref_vel < 49.5) {
             ref_vel += .224;
