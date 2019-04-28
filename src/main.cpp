@@ -61,7 +61,7 @@ int main() {
   string curr_state = "KL";
 
   h.onMessage([&ref_vel, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
-               &map_waypoints_dx,&map_waypoints_dy, &lane]
+               &map_waypoints_dx,&map_waypoints_dy, &lane, &curr_state]
               (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -127,6 +127,11 @@ int main() {
           
           // Loop over cars detected by sensor fusion
           //  find ref_v to use
+          bool too_close = false;
+          int best_cost = 100;
+          int temp_cost = 0;
+          int best_idx = 0;
+          double VEHICLE_RADIUS = 2.0;
           for (int i=0; i < sensor_fusion.size(); i++) {
             float d = sensor_fusion[i][6];
             double vx = sensor_fusion[i][3];
@@ -141,14 +146,9 @@ int main() {
             //  + collision cost
             //  + buffer cost
             //  + inefficiency cost
-            bool too_close = false;
-            int best_cost = 100;
-            int temp_cost = 0;
-            int best_idx = 0;
-            double VEHICLE_RADIUS = 2.0;
             for (int j=0; j < states.size(); j++) {
               if (states[j].compare("KL") == 0) {
-                if (d < (2+4*lane+2) && d > (2+4*lane-2) {
+                if (d < (2+4*lane+2) && d > (2+4*lane-2)) {
                   too_close = true;
                   // buffer cost
                   if (fabs(check_car_s-car_s)  < 30) {
@@ -160,14 +160,14 @@ int main() {
                   }
                 }
                 // inefficiency cost
-                cost += (2.0*49.5-check_speed-check_speed)/49.5;
+                temp_cost += (2.0*49.5-check_speed-check_speed)/49.5;
               } else if ((states[i].compare("PLCL") == 0) ||
                          (states[i].compare("LCL") == 0)) {
                 // Check current lane
                 if (lane == 0) {
-                  cost += 100;
+                  temp_cost += 100;
                 }
-                if (d < (2+4*(lane-1)+2) && d > (2+4*(lane-1)-2) {
+                if (d < (2+4*(lane-1)+2) && d > (2+4*(lane-1)-2)) {
                   too_close = true;
                   // buffer cost
                   if (fabs(check_car_s-car_s)  < 30) {
@@ -179,14 +179,14 @@ int main() {
                   }
                 }
                 // inefficiency cost
-                cost += (2.0*49.5-check_speed-car_speed)/49.5;
+                temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
               } else if ((states[i].compare("PLCR") == 0) ||
                          (states[i].compare("LCR") == 0)) {
                 // Check current lane
                 if (lane == 2) {
-                  cost += 100;
+                  temp_cost += 100;
                 }
-                if (d < (2+4*(lane+1)+2) && d > (2+4*(lane+1)-2) {
+                if (d < (2+4*(lane+1)+2) && d > (2+4*(lane+1)-2)) {
                   too_close = true;
                   // buffer cost
                   if (fabs(check_car_s-car_s)  < 30) {
@@ -198,10 +198,10 @@ int main() {
                   }
                 }
                 // inefficiency cost
-                cost += (2.0*49.5-check_speed-car_speed)/49.5;
+                temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
               }
               
-              if (cost < best_cost) {
+              if (temp_cost < best_cost) {
                 best_cost = cost;
                 best_idx = j;
               }
