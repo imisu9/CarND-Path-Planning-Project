@@ -202,7 +202,7 @@ int main() {
               }
               
               if (temp_cost < best_cost) {
-                best_cost = cost;
+                best_cost = temp_cost;
                 best_idx = j;
               }
             }
