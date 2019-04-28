@@ -239,7 +239,7 @@ int main() {
           
           if (too_close) {
             ref_vel -= .224;
-          } else if (temp_collision) {
+          } else if (collision) {
             ref_vel -= .224 * 2.0;
           } else if (ref_vel < 49.5) {
             ref_vel += .224;
