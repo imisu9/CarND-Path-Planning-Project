@@ -138,8 +138,12 @@ int main() {
             std::cout << " " << std::endl;
             std::cout << " " << std::endl;
             std::cout << "$$$$$$ CHECKING STATE, " << states[i] << "$$$$$$" << std::endl;
-            bool temp_too_close = false; // consider only the car ahead
+            // varialble definition and initiailization
             double temp_cost = 0.0;
+            double worst_cost = 0.0;
+            double VEHICLE_RADIUS = 2.0;
+            too_close = false;
+            
             // set lane coefficient
             int lane_coefficient = lane;
             if ((states[i].compare("PLCL") == 0) ||
@@ -159,12 +163,7 @@ int main() {
             }
             
             // Loop over cars detected by sensor fusion
-            //  find ref_v to use
-            
-            double worst_cost = 0.0;
-            bool temp_temp_too_close = false;
-            double VEHICLE_RADIUS = 2.0;
-            
+            //  find ref_v to use            
             for (int j=0; j < sensor_fusion.size(); j++) {
               float d = sensor_fusion[j][6];
               double vx = sensor_fusion[j][3];
@@ -178,7 +177,6 @@ int main() {
               temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
               
               // initialization before the loop begins
-              temp_temp_too_close = false;
               worst_cost = 0.0;
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
@@ -195,7 +193,7 @@ int main() {
                     // buffer cost
                     std::cout << "      buffer cost" << std::endl;
                     too_close = true;
-                    std::cout << "      temp_temp_too_close = " << temp_temp_too_close << std::endl;
+                    std::cout << "      too_close = " << too_close << std::endl;
                     temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0;
                   }
                 }
