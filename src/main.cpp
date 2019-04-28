@@ -103,7 +103,7 @@ int main() {
           if (prev_size > 0) {
             car_s = end_path_s;
           }
-          
+          /*
           // FSM and cost function
           // Populate possible states
           vector<string> states;
@@ -191,7 +191,6 @@ int main() {
           }
           
           // Select state by update lane & ref_vel & curr_state
-          /*
           curr_state = states[best_idx];
           if (curr_state.compare("LCL") == 0) {
             lane -= 1;
