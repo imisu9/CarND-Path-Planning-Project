@@ -131,6 +131,7 @@ int main() {
           //  + buffer cost
           //  + inefficiency cost
           bool too_close = false;
+          bool collision = false;
           double best_cost = 100.0;
           int best_idx = 0;
           
@@ -143,6 +144,7 @@ int main() {
             double worst_cost = 0.0;
             double VEHICLE_RADIUS = 2.0;
             double temp_too_close = false;  // taking most risk-averse perspective
+            double temp_collision = false;
             
             // Loop over cars detected by sensor fusion
             //  find ref_v to use            
@@ -185,10 +187,10 @@ int main() {
                   std::cout << "    the distance is " << check_car_s-car_s << std::endl;
                   if (check_car_s-car_s < 2*VEHICLE_RADIUS) {
                     // colision cost
-                    temp_too_close = true;
+                    temp_collision = true;
                     temp_cost += 1.0;
                     std::cout << "      collision cost" << std::endl;
-                    std::cout << "      temp_too_close = " << temp_too_close << std::endl;
+                    std::cout << "      temp_collision = " << temp_collision << std::endl;
                     std::cout << "      temp_cost(diff) = " << 1.0 << std::endl;
                   }
                   else if (check_car_s-car_s < 30) {
@@ -213,6 +215,7 @@ int main() {
               best_cost = worst_cost;
               best_idx = i;
               too_close = temp_too_close;
+              collision = temp_collision;
               std::cout << "====== a new best cost for a state ======" << std::endl;
               std::cout << "  state = " << states[best_idx] << std::endl;
               std::cout << "  too_close = " << too_close << std::endl;
@@ -228,14 +231,16 @@ int main() {
           std::cout << "  best_cost = " << best_cost << std::endl;
           std::cout << "  too_close = " << too_close << std::endl;
           curr_state = states[best_idx];
-          if (curr_state.compare("LCL") == 0) {
+          if (curr_state.compare("PLCL") == 0) {
             lane -= 1;
-          } else if (curr_state.compare("LCR") == 0) {
+          } else if (curr_state.compare("PLCR") == 0) {
             lane += 1;
           }         
           
           if (too_close) {
             ref_vel -= .224;
+          } else if (temp_collision) {
+            ref_vel -= .224 * 2.0;
           } else if (ref_vel < 49.5) {
             ref_vel += .224;
           }
