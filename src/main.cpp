@@ -128,7 +128,7 @@ int main() {
           // Loop over cars detected by sensor fusion
           //  find ref_v to use
           bool too_close = false; // consider only the car ahead
-          int best_cost = 100;
+          double best_cost = 100;
           int best_idx = 0;
           double VEHICLE_RADIUS = 2.0;
           for (int i=0; i < sensor_fusion.size(); i++) {
@@ -147,7 +147,7 @@ int main() {
             //  + inefficiency cost
             for (int j=0; j < states.size(); j++) {
               bool temp_too_close = false;
-              int temp_cost = 0;
+              double temp_cost = 0.0;
               // set lane coefficient
               int lane_coefficient = lane;
               if ((states[j].compare("PLCL") == 0) ||
@@ -167,18 +167,21 @@ int main() {
               }
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
-                if ((check_car_s > car_s) && (check_car_s-car_s < 30)) {
-                  // buffer cost
-                  std::cout << "buffer cost" << std::endl;
-                  temp_too_close = true;
-                  temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
-                  std::cout << "temp_cost = " << temp_cost << std::endl;
-                } else if ((check_car_s > car_s) && (check_car_s-car_s < 2*VEHICLE_RADIUS)) {
-                  // colision cost
-                  std::cout << "collision cost" << std::endl;
-                  temp_too_close = true;
-                  temp_cost += 1.0;
-                  std::cout << "temp_cost = " << temp_cost << std::endl;
+                if (check_car_s > car_s) {
+                  if (check_car_s-car_s < 2*VEHICLE_RADIUS) {
+                    // colision cost
+                    std::cout << "collision cost" << std::endl;
+                    temp_too_close = true;
+                    temp_cost += 1.0;
+                    std::cout << "temp_cost = " << temp_cost << std::endl;
+                  }
+                  else if (check_car_s-car_s < 30) {
+                    // buffer cost
+                    std::cout << "buffer cost" << std::endl;
+                    temp_too_close = true;
+                    temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0;
+                    std::cout << "temp_cost = " << temp_cost << std::endl;
+                  }
                 }
               }
               // inefficiency cost
