@@ -104,6 +104,7 @@ int main() {
             car_s = end_path_s;
           }
           
+          /*
           // FSM and cost function
           // Populate possible states
           vector<string> states;
@@ -215,13 +216,13 @@ int main() {
             lane += 1;
           }
           
+          curr_state = states[best_idx];
+          */
           if (too_close) {
             ref_vel -= .224;
           } else if (ref_vel < 49.5) {
             ref_vel += .224;
           }
-          
-          curr_state = states[best_idx];
           
           // END: FSM and cost function
 
