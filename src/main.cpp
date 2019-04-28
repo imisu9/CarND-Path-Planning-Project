@@ -188,13 +188,13 @@ int main() {
                   if (check_car_s-car_s < 2*VEHICLE_RADIUS) {
                     // colision cost
                     std::cout << "      collision cost" << std::endl;
-                    temp_temp_too_close = true;
+                    too_close = true;
                     temp_cost += 1.0;
                   }
                   else if (check_car_s-car_s < 30) {
                     // buffer cost
                     std::cout << "      buffer cost" << std::endl;
-                    temp_temp_too_close = true;
+                    too_close = true;
                     std::cout << "      temp_temp_too_close = " << temp_temp_too_close << std::endl;
                     temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0;
                   }
@@ -203,14 +203,12 @@ int main() {
               
               if (temp_cost > worst_cost) {
                 worst_cost = temp_cost;
-                temp_too_close = temp_temp_too_close;
                 std::cout << "  ====== a new worst cost for a state ======" << std::endl;
-                std::cout << "    too_close = " << temp_too_close << std::endl;
+                std::cout << "    too_close = " << too_close << std::endl;
                 std::cout << "    cost = " << worst_cost << std::endl;
               }
             }
             if (worst_cost < best_cost) {
-              too_close = temp_too_close;
               best_cost = worst_cost;
               best_idx = i;
               std::cout << "====== a new best cost for a state ======" << std::endl;
