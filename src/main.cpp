@@ -134,15 +134,15 @@ int main() {
           double best_cost = 100.0;
           int best_idx = 0;
           
+          std::cout << " " << std::endl;
+          std::cout << " " << std::endl;
           for (int i=0; i < states.size(); i++) {
-            std::cout << " " << std::endl;
-            std::cout << " " << std::endl;
             std::cout << "$$$$$$ CHECKING STATE, " << states[i] << "$$$$$$" << std::endl;
             // varialble definition and initiailization
             double temp_cost = 0.0;
             double worst_cost = 0.0;
             double VEHICLE_RADIUS = 2.0;
-            too_close = false;
+            double temp_too_close = false;
             
             // set lane coefficient
             int lane_coefficient = lane;
@@ -186,13 +186,13 @@ int main() {
                   if (check_car_s-car_s < 2*VEHICLE_RADIUS) {
                     // colision cost
                     std::cout << "      collision cost" << std::endl;
-                    too_close = true;
+                    temp_too_close = true;
                     temp_cost += 1.0;
                   }
                   else if (check_car_s-car_s < 30) {
                     // buffer cost
                     std::cout << "      buffer cost" << std::endl;
-                    too_close = true;
+                    temp_too_close = true;
                     std::cout << "      too_close = " << too_close << std::endl;
                     temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0;
                   }
@@ -202,13 +202,14 @@ int main() {
               if (temp_cost > worst_cost) {
                 worst_cost = temp_cost;
                 std::cout << "  ====== a new worst cost for a state ======" << std::endl;
-                std::cout << "    too_close = " << too_close << std::endl;
+                std::cout << "    temp_too_close = " << temp_too_close << std::endl;
                 std::cout << "    cost = " << worst_cost << std::endl;
               }
             }
             if (worst_cost < best_cost) {
               best_cost = worst_cost;
               best_idx = i;
+              too_close = temp_too_close;
               std::cout << "====== a new best cost for a state ======" << std::endl;
               std::cout << "  state = " << states[best_idx] << std::endl;
               std::cout << "  too_close = " << too_close << std::endl;
