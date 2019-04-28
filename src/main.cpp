@@ -168,11 +168,11 @@ int main() {
               }
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
-                if (check_car_s-car_sfabs > 0 && check_car_s-car_s < 30) {
+                if (check_car_s-car_s > 0 && check_car_s-car_s < 30) {
                   // buffer cost
                   too_close = true;
                   temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
-                } else if (check_car_s-car_sfabs > 0 && check_car_s-car_s < 2*VEHICLE_RADIUS) {
+                } else if (check_car_s-car_s > 0 && check_car_s-car_s < 2*VEHICLE_RADIUS) {
                   // colision cost
                   too_close = true;
                   temp_cost += 1.0;
