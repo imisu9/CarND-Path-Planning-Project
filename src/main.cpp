@@ -103,7 +103,7 @@ int main() {
           if (prev_size > 0) {
             car_s = end_path_s;
           }
-          /*
+          
           // FSM and cost function
           // Populate possible states
           vector<string> states;
@@ -124,7 +124,7 @@ int main() {
             states.push_back("LCR");
             states.push_back("KL");
           }
-          
+          /*
           // Loop over cars detected by sensor fusion
           //  find ref_v to use
           bool too_close = false; // consider only the car ahead
@@ -189,7 +189,7 @@ int main() {
               }
             }
           }
-          
+          */
           // Select state by update lane & ref_vel & curr_state
           curr_state = states[best_idx];
           if (curr_state.compare("LCL") == 0) {
@@ -197,7 +197,7 @@ int main() {
           } else if (curr_state.compare("LCR") == 0) {
             lane += 1;
           }         
-          */
+          
           if (false) {
             ref_vel -= .224;
           } else if (ref_vel < 49.5) {
