@@ -129,7 +129,6 @@ int main() {
           //  find ref_v to use
           bool too_close = false; // consider only the car ahead
           int best_cost = 100;
-          int temp_cost = 0;
           int best_idx = 0;
           double VEHICLE_RADIUS = 2.0;
           for (int i=0; i < sensor_fusion.size(); i++) {
@@ -147,6 +146,8 @@ int main() {
             //  + buffer cost
             //  + inefficiency cost
             for (int j=0; j < states.size(); j++) {
+              bool temp_too_close = false;
+              int temp_cost = 0;
               // set lane coefficient
               int lane_coefficient = 0;
               if (states[j].compare("KL") == 0) {
@@ -170,11 +171,11 @@ int main() {
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
                 if (check_car_s-car_s > 0 && check_car_s-car_s < 30) {
                   // buffer cost
-                  too_close = true;
+                  temp_too_close = true;
                   temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
                 } else if (check_car_s-car_s > 0 && check_car_s-car_s < 2*VEHICLE_RADIUS) {
                   // colision cost
-                  too_close = true;
+                  temp_too_close = true;
                   temp_cost += 1.0;
                 }
               }
@@ -184,6 +185,7 @@ int main() {
               if (temp_cost < best_cost) {
                 best_cost = temp_cost;
                 best_idx = j;
+                too_close = temp_too_close;
               }
             }
           }
