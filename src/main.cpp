@@ -157,7 +157,6 @@ int main() {
               
               // initialization before the loop begins
               temp_cost = 0.0;
-              worst_cost = 0.0;
               
               // set lane coefficient
               int lane_coefficient = lane;
