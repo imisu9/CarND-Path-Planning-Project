@@ -104,6 +104,7 @@ int main() {
             car_s = end_path_s;
           }
           
+          // FSM and cost function
           // Populate possible states
           vector<string> states;
           states.push_back("KL");
@@ -124,20 +125,86 @@ int main() {
             states.push_back("KL");
           }
           
-          // Calculate cost
-          //  "cost functions"
-          //  + collision cost
-          //  + buffer cost
-          //  + inefficiency cost
-          bool too_close = false;
-          int best_cost = 1000;
-          int best_idx = 0;
-          for (int i=0; i < states.size(); i++) {
-            if (states[i].compare("KL") == 0) {
-            } else if (states[i].compare("PLCL") == 0) {
-            } else if (states[i].compare("LCL") == 0) {
-            } else if (states[i].compare("PLCR") == 0) {
-            } else if (states[i].compare("LCR") == 0) {
+          // Loop over cars detected by sensor fusion
+          //  find ref_v to use
+          for (int i=0; i < sensor_fusion.size(); i++) {
+            float d = sensor_fusion[i][6];
+            double vx = sensor_fusion[i][3];
+            double vy = sensor_fusion[i][4];
+            double check_speed = sqrt(vx*vx+vy*vy);
+            double check_car_s = sensor_fusion[i][5];
+            // if using previous points can project s value outwards in time
+            check_car_s += ((double)prev_size*.02*check_speed);
+            
+            // Calculate cost according to next state
+            //  "cost functions"
+            //  + collision cost
+            //  + buffer cost
+            //  + inefficiency cost
+            bool too_close = false;
+            int best_cost = 100;
+            int temp_cost = 0;
+            int best_idx = 0;
+            double VEHICLE_RADIUS = 2.0;
+            for (int j=0; j < states.size(); j++) {
+              if (states[j].compare("KL") == 0) {
+                if (d < (2+4*lane+2) && d > (2+4*lane-2) {
+                  too_close = true;
+                  // buffer cost
+                  if (fabs(check_car_s-car_s)  < 30) {
+                    temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
+                  }
+                  // colision cost
+                  if (fabs(check_car_s-car_s)  < 2*VEHICLE_RADIUS) {
+                    temp_cost += 1.0;
+                  }
+                }
+                // inefficiency cost
+                cost += (2.0*49.5-check_speed-check_speed)/49.5;
+              } else if ((states[i].compare("PLCL") == 0) ||
+                         (states[i].compare("LCL") == 0)) {
+                // Check current lane
+                if (lane == 0) {
+                  cost += 100;
+                }
+                if (d < (2+4*(lane-1)+2) && d > (2+4*(lane-1)-2) {
+                  too_close = true;
+                  // buffer cost
+                  if (fabs(check_car_s-car_s)  < 30) {
+                    temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
+                  }
+                  // colision cost
+                  if (fabs(check_car_s-car_s)  < 2*VEHICLE_RADIUS) {
+                    temp_cost += 1.0;
+                  }
+                }
+                // inefficiency cost
+                cost += (2.0*49.5-check_speed-car_speed)/49.5;
+              } else if ((states[i].compare("PLCR") == 0) ||
+                         (states[i].compare("LCR") == 0)) {
+                // Check current lane
+                if (lane == 2) {
+                  cost += 100;
+                }
+                if (d < (2+4*(lane+1)+2) && d > (2+4*(lane+1)-2) {
+                  too_close = true;
+                  // buffer cost
+                  if (fabs(check_car_s-car_s)  < 30) {
+                    temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/fabs(check_car_s-car_s)))-1.0;
+                  }
+                  // colision cost
+                  if (fabs(check_car_s-car_s)  < 2*VEHICLE_RADIUS) {
+                    temp_cost += 1.0;
+                  }
+                }
+                // inefficiency cost
+                cost += (2.0*49.5-check_speed-car_speed)/49.5;
+              }
+              
+              if (cost < best_cost) {
+                best_cost = cost;
+                best_idx = j;
+              }
             }
           }
           
@@ -155,39 +222,6 @@ int main() {
           }
           
           curr_state = states[best_idx];
-          
-          /*
-          bool too_close = false;
-          
-          // find ref_v to use
-          for (int i=0; i < sensor_fusion.size(); i++) {
-            // car is in my lane
-            float d = sensor_fusion[i][6];
-            if (d < (2+4*lane+2) && d > (2+4*lane-2)) {
-              double vx = sensor_fusion[i][3];
-              double vy = sensor_fusion[i][4];
-              double check_speed = sqrt(vx*vx+vy*vy);
-              double check_car_s = sensor_fusion[i][5];
-              
-              // if using previous points can project s value outwards in time
-              check_car_s += ((double)prev_size*.02*check_speed);
-              // check s values greater than mine and s gap
-              if ((check_car_s > car_s) && ((check_car_s-car_s) < 30)) {
-                // Do some logic here, lower reference velocity so we don't crash into the car in front of us,
-                // could also flag to try to change lanes.
-                //ref_vel = 29.5; //mph
-                too_close = true;
-              }
-            }
-          }
-          
-          if (too_close) {
-            ref_vel -= .224;
-          } else if (ref_vel < 49.5) {
-            ref_vel += .224;
-          }
-          */
-          // FSM and cost function
           
           // END: FSM and cost function
 
