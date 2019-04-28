@@ -142,25 +142,7 @@ int main() {
             double temp_cost = 0.0;
             double worst_cost = 0.0;
             double VEHICLE_RADIUS = 2.0;
-            double temp_too_close = false;
-            
-            // set lane coefficient
-            int lane_coefficient = lane;
-            if ((states[i].compare("PLCL") == 0) ||
-                (states[i].compare("LCL") == 0)) {
-              lane_coefficient -= 1;
-              // Check current lane
-              if (lane == 0) {
-                temp_cost += 10.0;
-              }
-            } else if ((states[i].compare("PLCR") == 0) ||
-                       (states[i].compare("LCR") == 0)) {
-              lane_coefficient += 1;
-              // Check current lane
-              if (lane == 2) {
-                temp_cost += 10.0;
-              }
-            }
+            double temp_too_close = false;  // taking most risk-averse perspective
             
             // Loop over cars detected by sensor fusion
             //  find ref_v to use            
@@ -173,11 +155,30 @@ int main() {
               // if using previous points can project s value outwards in time
               check_car_s += ((double)prev_size*.02*check_speed);
               
+              // initialization before the loop begins
+              temp_cost = 0.0;
+              worst_cost = 0.0;
+              
+              // set lane coefficient
+              int lane_coefficient = lane;
+              if ((states[i].compare("PLCL") == 0) ||
+                  (states[i].compare("LCL") == 0)) {
+                lane_coefficient -= 1;
+                // Check current lane
+                if (lane == 0) {
+                  temp_cost += 10.0;
+                }
+              } else if ((states[i].compare("PLCR") == 0) ||
+                         (states[i].compare("LCR") == 0)) {
+                lane_coefficient += 1;
+                // Check current lane
+                if (lane == 2) {
+                  temp_cost += 10.0;
+                }
+              }
+              
               // inefficiency cost
               temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
-              
-              // initialization before the loop begins
-              worst_cost = 0.0;
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
                 if (check_car_s > car_s) {
@@ -185,16 +186,19 @@ int main() {
                   std::cout << "    the distance is " << check_car_s-car_s << std::endl;
                   if (check_car_s-car_s < 2*VEHICLE_RADIUS) {
                     // colision cost
-                    std::cout << "      collision cost" << std::endl;
                     temp_too_close = true;
                     temp_cost += 1.0;
+                    std::cout << "      collision cost" << std::endl;
+                    std::cout << "      temp_too_close = " << temp_too_close << std::endl;
+                    std::cout << "      temp_cost(diff) = " << 1.0 << std::endl;
                   }
                   else if (check_car_s-car_s < 30) {
                     // buffer cost
-                    std::cout << "      buffer cost" << std::endl;
                     temp_too_close = true;
-                    std::cout << "      too_close = " << too_close << std::endl;
                     temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0;
+                    std::cout << "      buffer cost" << std::endl;
+                    std::cout << "      temp_too_close = " << temp_too_close << std::endl;
+                    std::cout << "      temp_cost(diff) = " << 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0 << std::endl;
                   }
                 }
               }
@@ -218,7 +222,9 @@ int main() {
           }
 
           // Select state by update lane & ref_vel & curr_state
-          std::cout << "====== the final next state ======" << std::endl;
+          std::cout << " " << std::endl;
+          std::cout << " " << std::endl;
+          std::cout << "++++++ the final next state ++++++" << std::endl;
           std::cout << "  state = " << states[best_idx] << std::endl;
           std::cout << "  best_cost = " << best_cost << std::endl;
           std::cout << "  too_close = " << too_close << std::endl;
