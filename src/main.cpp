@@ -198,7 +198,7 @@ int main() {
             lane += 1;
           }         
           
-          if (false) {
+          if (too_close) {
             ref_vel -= .224;
           } else if (ref_vel < 49.5) {
             ref_vel += .224;
