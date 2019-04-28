@@ -56,6 +56,9 @@ int main() {
   
   // Have a reference velocity in mph to target
   double ref_vel = 0.0; //mph
+  
+  // Current state
+  string curr_state = "KL";
 
   h.onMessage([&ref_vel, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
                &map_waypoints_dx,&map_waypoints_dy, &lane]
@@ -101,6 +104,59 @@ int main() {
             car_s = end_path_s;
           }
           
+          // Populate possible states
+          vector<string> states;
+          states.push_back("KL");
+          if(curr_state.compare("KL") == 0) {
+            states.push_back("PLCL");
+            states.push_back("PLCR");
+          } else if (curr_state.compare("PLCL") == 0) {
+            states.push_back("PLCL");
+            states.push_back("LCL");
+          } else if (curr_state.compare("PLCR") == 0) {
+            states.push_back("PLCR");
+            states.push_back("LCR");
+          } else if (curr_state.compare("LCL") == 0) {
+            states.push_back("LCL");
+            states.push_back("KL");
+          } else if (curr_state.compare("LCR") == 0) {
+            states.push_back("LCR");
+            states.push_back("KL");
+          }
+          
+          // Calculate cost
+          //  "cost functions"
+          //  + collision cost
+          //  + buffer cost
+          //  + inefficiency cost
+          bool too_close = false;
+          int best_cost = 1000;
+          int best_idx = 0;
+          for (int i=0; i < states.size(); i++) {
+            if (states[i].compare("KL") == 0) {
+            } else if (states[i].compare("PLCL") == 0) {
+            } else if (states[i].compare("LCL") == 0) {
+            } else if (states[i].compare("PLCR") == 0) {
+            } else if (states[i].compare("LCR") == 0) {
+            }
+          }
+          
+          // Select state by update lane & ref_vel & curr_state
+          if (states[best_idx].compare("LCL") == 0) {
+            lane -= 1;
+          } else if (states[best_idx].compare("LCR") == 0) {
+            lane += 1;
+          }
+          
+          if (too_close) {
+            ref_vel -= .224;
+          } else if (ref_vel < 49.5) {
+            ref_vel += .224;
+          }
+          
+          curr_state = states[best_idx];
+          
+          /*
           bool too_close = false;
           
           // find ref_v to use
@@ -130,6 +186,10 @@ int main() {
           } else if (ref_vel < 49.5) {
             ref_vel += .224;
           }
+          */
+          // FSM and cost function
+          
+          // END: FSM and cost function
 
           json msgJson;
 
