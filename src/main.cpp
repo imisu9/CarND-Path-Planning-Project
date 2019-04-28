@@ -124,7 +124,7 @@ int main() {
             states.push_back("LCR");
             states.push_back("KL");
           }
-          /*
+          
           // Loop over cars detected by sensor fusion
           //  find ref_v to use
           bool too_close = false; // consider only the car ahead
@@ -152,15 +152,15 @@ int main() {
               int lane_coefficient = 0;
               if (states[j].compare("KL") == 0) {
                 lane_coefficient = lane;
-              } else if ((states[i].compare("PLCL") == 0) ||
-                         (states[i].compare("LCL") == 0)) {
+              } else if ((states[j].compare("PLCL") == 0) ||
+                         (states[j].compare("LCL") == 0)) {
                 lane_coefficient = lane - 1;
                 // Check current lane
                 if (lane == 0) {
                   temp_cost += 100;
                 }
-              } else if ((states[i].compare("PLCR") == 0) ||
-                         (states[i].compare("LCR") == 0)) {
+              } else if ((states[j].compare("PLCR") == 0) ||
+                         (states[j].compare("LCR") == 0)) {
                 lane_coefficient = lane + 1;
                 // Check current lane
                 if (lane == 2) {
@@ -189,7 +189,7 @@ int main() {
               }
             }
           }
-          */
+
           // Select state by update lane & ref_vel & curr_state
           curr_state = states[best_idx];
           if (curr_state.compare("LCL") == 0) {
