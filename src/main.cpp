@@ -131,6 +131,9 @@ int main() {
           //  + buffer cost
           //  + inefficiency cost
           bool too_close = false;
+          double best_cost = 10.0;
+          int best_idx = 0;
+          
           for (int i=0; i < states.size(); i++) {
             std::cout << "$$$$$$ CHECKING STATE, " << states[i] << "$$$$$$" << std::endl;
             bool temp_too_close = false; // consider only the car ahead
@@ -155,9 +158,15 @@ int main() {
             
             // Loop over cars detected by sensor fusion
             //  find ref_v to use
-            double best_cost = 10.0;
-            int best_idx = 0;
+            
+            double worst_cost = 0.0;
+            bool temp_temp_too_close = false;
             double VEHICLE_RADIUS = 2.0;
+            
+            // initialization before the loop begins
+            best_cost = 10.0;
+            best_idx = 0;
+            
             for (int j=0; j < sensor_fusion.size(); j++) {
               float d = sensor_fusion[j][6];
               double vx = sensor_fusion[j][3];
@@ -170,8 +179,9 @@ int main() {
               // inefficiency cost
               temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
               
-              bool temp_temp_too_close = false;
-              double worst_cost = 0.0;
+              // initialization before the loop begins
+              temp_temp_too_close = false;
+              worst_cost = 0.0;
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
                 if (check_car_s > car_s) {
