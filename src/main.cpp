@@ -128,7 +128,7 @@ int main() {
           // Loop over cars detected by sensor fusion
           //  find ref_v to use
           bool too_close = false; // consider only the car ahead
-          double best_cost = 100;
+          double best_cost = 10;
           int best_idx = 0;
           double VEHICLE_RADIUS = 2.0;
           for (int i=0; i < sensor_fusion.size(); i++) {
@@ -155,32 +155,32 @@ int main() {
                 lane_coefficient -= 1;
                 // Check current lane
                 if (lane == 0) {
-                  temp_cost += 100;
+                  temp_cost += 10;
                 }
               } else if ((states[j].compare("PLCR") == 0) ||
                          (states[j].compare("LCR") == 0)) {
                 lane_coefficient += 1;
                 // Check current lane
                 if (lane == 2) {
-                  temp_cost += 100;
+                  temp_cost += 10;
                 }
               }
               
               if (d < (2+4*lane_coefficient+2) && d > (2+4*lane_coefficient-2)) {
                 if (check_car_s > car_s) {
+                  std::cout << "====== a car is ahead ======" << std::endl;
+                  std::cout << "  the distance is " << check_car_s-car_s << std::endl;
                   if (check_car_s-car_s < 2*VEHICLE_RADIUS) {
                     // colision cost
-                    std::cout << "collision cost" << std::endl;
+                    std::cout << "    collision cost" << std::endl;
                     temp_too_close = true;
                     temp_cost += 1.0;
-                    std::cout << "temp_cost = " << temp_cost << std::endl;
                   }
                   else if (check_car_s-car_s < 30) {
                     // buffer cost
-                    std::cout << "buffer cost" << std::endl;
+                    std::cout << "    buffer cost" << std::endl;
                     temp_too_close = true;
                     temp_cost += 2.0/(1+exp(-2*VEHICLE_RADIUS/(check_car_s-car_s)))-1.0;
-                    std::cout << "temp_cost = " << temp_cost << std::endl;
                   }
                 }
               }
@@ -188,23 +188,30 @@ int main() {
               temp_cost += (2.0*49.5-check_speed-car_speed)/49.5;
               
               if (temp_cost < best_cost) {
+                std::cout << "====== a new best cost for a state ======" << std::endl;
+                std::cout << "  state = " << states[j] << std::endl;
+                std::cout << "  pre_best_cost = " << best_cost << std::endl;
+                std::cout << "  new_best_cost = " << temp_cost << std::endl;
+                std::cout << "  temp_too_close = " << temp_too_close << std::endl;
                 best_cost = temp_cost;
                 best_idx = j;
                 too_close = temp_too_close;
-                std::cout << "best_cost = " << best_cost << std::endl;
-                std::cout << "temp_too_close = " << temp_too_close << std::endl;
               }
             }
           }
 
           // Select state by update lane & ref_vel & curr_state
+          std::cout << "====== the final next state ======" << std::endl;
+          std::cout << "  state = " << states[best_idx] << std::endl;
+          std::cout << "  best_cost = " << best_cost << std::endl;
+          std::cout << "  too_close = " << too_close << std::endl;
           curr_state = states[best_idx];
           if (curr_state.compare("LCL") == 0) {
             lane -= 1;
           } else if (curr_state.compare("LCR") == 0) {
             lane += 1;
           }         
-          std::cout << "too_close = " << too_close << std::endl;
+          
           if (too_close) {
             ref_vel -= .224;
           } else if (ref_vel < 49.5) {
